@@ -1,0 +1,19 @@
+package com.hiyun.tueasy.model;
+
+import java.io.Serializable;
+
+public class MyExcel implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7284043476521444501L;
+	/**
+	 * 唯一id
+	 */
+	private String uuid;
+	private String excelName;
+	private MySheet sheet;
+	
+
+}

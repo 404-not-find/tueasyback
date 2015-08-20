@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:neo4j="http://www.springframework.org/schema/data/neo4j"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/data/neo4j
+        http://www.springframework.org/schema/data/neo4j/spring-neo4j.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd">
+        
+	<!-- spring mvc 注入propeties文件 -->
+	   <context:property-placeholder location="classpath:upload.properties"/>  
+	    
+	    
+	<!-- Scans the classpath of this application for @Components to deploy as 
+		beans -->
+		
+	 <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">  
+        <property name="messageConverters">  
+            <list>  
+                <bean class="org.springframework.http.converter.StringHttpMessageConverter">  
+                    <property name="supportedMediaTypes">  
+                        <list>  
+                            <value>application/json;charset=UTF-8</value>  
+                        </list>  
+                    </property>  
+                </bean>  
+            </list>  
+        </property>  
+    </bean>  
+    	
+	<mvc:annotation-driven enable-matrix-variables="true" />
+
+	<context:spring-configured />
+	<context:annotation-config />	
+	<context:component-scan base-package="com.hiyun.tueasy"/>
+	
+	<bean
+		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+		<!-- All configuration is now done by the manager - since Spring V3.2 -->
+		<property name="contentNegotiationManager" ref="cnManager" />
+		<!-- 在没有扩展名时即: "/user/1" 时的默认展现形式 -->  
+     
+		<property name="viewResolvers">
+			<list>
+				<bean class="org.springframework.web.servlet.view.BeanNameViewResolver" />
+			</list>
+		</property>
+		<property name="defaultViews">
+			<list>
+				<bean
+					class="org.springframework.web.servlet.view.json.MappingJackson2JsonView" />
+			</list>
+		</property>
+
+	</bean>
+	<bean id="cnManager"
+		class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+		<property name="ignoreAcceptHeader" value="true" />
+		<property name="defaultContentType" value="text/html" />
+		<property name="mediaTypes">
+			<map>
+				<entry key="json" value="application/json" />
+			</map>
+		</property>
+		<property name="favorParameter" value="false" />
+
+	</bean>
+	<mvc:annotation-driven />
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="utf-8"/>
+		<property name="maxUploadSize" value="104857600" />
+		<property name="maxInMemorySize" value="4096" />
+	</bean>
+	<bean id="dataSource" destroy-method="close"
+		class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@192.168.0.21:1521:orcl" />
+		<property name="username" value="hymil" />
+		<property name="password" value="hymil" />
+	</bean>
+	
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	 <!-- 1.注解方式配置事务  -->  
+    <bean id="txManager"  
+        class="org.springframework.jdbc.datasource.DataSourceTransactionManager">  
+        <property name="dataSource" ref="dataSource" />  
+    </bean>  
+  
+    <tx:annotation-driven transaction-manager="txManager" />  
+	
+</beans>

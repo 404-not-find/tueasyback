@@ -1,0 +1,14 @@
+package com.hiyun.tueasy.model;
+
+import java.io.Serializable;
+
+public class MySheet implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1781724203149803863L;
+
+	
+	
+}
