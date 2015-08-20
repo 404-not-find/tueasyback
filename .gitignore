@@ -44,3 +44,7 @@ Temporary Items
 
 #project of my 
 .classpath
+.project
+.settings
+.svn
+target
